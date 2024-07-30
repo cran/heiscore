@@ -21,7 +21,7 @@ cleanDataset <- function(dataset){
     )
 
   # convert empty strings to NA values
-  cleanData$FAMINC[cleanData$FAMINC==''] <- "NA"
+  cleanData$FAMINC[is.na(cleanData$FAMINC)] <- "NA"
 
   return(cleanData)
 }

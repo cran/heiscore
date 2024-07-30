@@ -177,13 +177,13 @@ plotScore <- function(graph = NULL, method, years, component, demo = NULL, sex =
     result_plot <- ggplot2::ggplot(score_output) +
       ggplot2::geom_histogram(ggplot2::aes(x=score, y=ggplot2::after_stat(count/sum(count)), weight = WTDR2D), boundary=0, bins = 20) +
       ggplot2::ylab("Proportion") +
-      ggplot2::xlab(heiComponent) +
+      ggplot2::xlab(stringr::str_to_title(heiComponent)) +
       ggplot2::theme_classic() +
       ggplot2::theme(axis.text=ggplot2::element_text(color="black", size=11),
                      axis.title = ggplot2::element_text(face="bold", size=15)) +
       ggplot2::xlim(0, axisMax) +
       if(heiComponent != "total score"){
-        ggplot2::ggtitle(paste0("Weighted Histogram of ", heiComponent, " Scores"))
+        ggplot2::ggtitle(paste0("Weighted Histogram of ", stringr::str_to_title(heiComponent), " Scores"))
       } else{
         ggplot2::ggtitle(paste0("Weighted Histogram of Total Scores"))
       }
@@ -212,12 +212,12 @@ plotScore <- function(graph = NULL, method, years, component, demo = NULL, sex =
       score <- rlang::sym("score")
 
       result_plot <- ggplot2::ggplot(score_output) +
-        ggplot2::geom_bar(ggplot2::aes(x=!!demoVar, y=!!score), stat="identity") +
-        ggplot2::labs(title = paste(scoringMethod, "Scores by", demographicGroup), x = demographicGroup, y = "Score") +
+        ggplot2::geom_bar(ggplot2::aes(x=!!demoVar, y=!!score, fill = !!demoVar), stat="identity") +
+        ggplot2::labs(title = paste(stringr::str_to_title(scoringMethod), "Scores by", stringr::str_to_title(demographicGroup)), x = stringr::str_to_title(demographicGroup), y = "Score") +
         ggplot2::theme_classic() +
         ggplot2::scale_fill_manual(values=radarColors) +
         ggplot2::ylim(0, axisMax)  +
-        ggplot2::guides(fill=ggplot2::guide_legend(title=demographicGroup)) +
+        ggplot2::guides(fill=ggplot2::guide_legend(title=stringr::str_to_title(demographicGroup))) +
         if(demographicGroup == "Family Income"){
           ggplot2::theme(axis.text=ggplot2::element_text(color="black", size=11),
                          axis.title = ggplot2::element_text(face="bold", size=15),
@@ -237,7 +237,7 @@ plotScore <- function(graph = NULL, method, years, component, demo = NULL, sex =
         as.data.frame()
       rownames(final_radar_data) <- c("Max", "Min", as.vector(unlist(score_output[,1])))
 
-      colnames(final_radar_data) <- names(variableList_heiComponents[-c(1)])
+      colnames(final_radar_data) <- stringr::str_to_title(names(variableList_heiComponents[-c(1)]))
       demoVar <- rlang::sym(colnames(final_radar_data)[1])
 
 

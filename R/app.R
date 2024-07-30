@@ -692,6 +692,11 @@ runShinyApp <- function(){
         else{
           ymax = hei_standards_2020$max_points[hei_standards_2020$component == input$scoringVariable]
         }
+        if(input$scoringVariable == "Total Score" | input$scoringVariable == "TFACIDS"){
+          filtered_scoringData <- filtered_scoringData %>%
+            dplyr::mutate(TOT_TFACIDS = (DR1_MONOPOLY + DR2_MONOPOLY) / (DR1TSFAT + DR2TSFAT)) %>%
+            dplyr::select(-c(DR1_TFACIDS, DR2_TFACIDS))
+        }
 
         ##### Simple Scoring #####
         if(input$scoringMethod == "Simple"){
@@ -722,6 +727,7 @@ runShinyApp <- function(){
             else{
               finalSimpleScores <- simpleScoreApp(filtered_scoringData, input$scoringVariable, scoringStandards) %>%
                 tidyr::drop_na()
+
             }
           }
 
@@ -753,6 +759,12 @@ runShinyApp <- function(){
                             FAMINC %in% input$scoringIncome)
             shiny::validate(
               shiny::need(nrow(filtered_scoringData) > 0, "No individuals selected."))
+
+            if(input$scoringVariable == "Total Score" | input$scoringVariable == "TFACIDS"){
+              filtered_scoringData <- filtered_scoringData %>%
+                dplyr::mutate(TOT_TFACIDS = (DR1_MONOPOLY + DR2_MONOPOLY) / (DR1TSFAT + DR2TSFAT)) %>%
+                dplyr::select(-c(DR1_TFACIDS, DR2_TFACIDS))
+            }
 
             if(nrow(filtered_scoringData) == 0){
               finalSimpleScores <- data.frame(
@@ -903,6 +915,12 @@ runShinyApp <- function(){
                 shiny::validate(
                   shiny::need(nrow(filtered_scoringData2) > 0, "No individuals selected."))
 
+                if(input$scoringVariable == "Total Score" | input$scoringVariable == "TFACIDS"){
+                  filtered_scoringData2 <- filtered_scoringData2 %>%
+                    dplyr::mutate(TOT_TFACIDS = (DR1_MONOPOLY + DR2_MONOPOLY) / (DR1TSFAT + DR2TSFAT)) %>%
+                    dplyr::select(-c(DR1_TFACIDS, DR2_TFACIDS))
+                }
+
                 scoresTable <- filtered_scoringData2 %>%
                   dplyr::select(scoringDemographicVariable) %>%
                   tidyr::drop_na() %>%
@@ -1029,6 +1047,12 @@ runShinyApp <- function(){
                 shiny::validate(
                   shiny::need(nrow(filtered_scoringData2) > 0, "No individuals selected."))
 
+                if(input$scoringVariable == "Total Score" | input$scoringVariable == "TFACIDS"){
+                  filtered_scoringData2 <- filtered_scoringData2 %>%
+                    dplyr::mutate(TOT_TFACIDS = (DR1_MONOPOLY + DR2_MONOPOLY) / (DR1TSFAT + DR2TSFAT)) %>%
+                    dplyr::select(-c(DR1_TFACIDS, DR2_TFACIDS))
+                }
+
                 scoresTable <- filtered_scoringData2 %>%
                   dplyr::select(scoringDemographicVariable) %>%
                   tidyr::drop_na() %>%
@@ -1134,6 +1158,12 @@ runShinyApp <- function(){
 
               shiny::validate(
                 shiny::need(nrow(filtered_scoringData) > 0, "No individuals selected."))
+
+              if(input$scoringVariable == "Total Score" | input$scoringVariable == "TFACIDS"){
+                filtered_scoringData <- filtered_scoringData %>%
+                  dplyr::mutate(TOT_TFACIDS = (DR1_MONOPOLY + DR2_MONOPOLY) / (DR1TSFAT + DR2TSFAT)) %>%
+                  dplyr::select(-c(DR1_TFACIDS, DR2_TFACIDS))
+              }
 
               filtered_scoringData <- filtered_scoringData %>%
                 dplyr::select(dplyr::contains(input$scoringVariable), dplyr::contains("KCAL"), WTDR2D, scoringDemographicVariable) %>%

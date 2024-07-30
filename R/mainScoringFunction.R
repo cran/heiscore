@@ -141,6 +141,12 @@ score <- function(method, years, component, demo = NULL, sex = c("Female", "Male
   ### Scoring ###
   scoringVariable<- unlist(variableList_heiComponents[heiComponent])
 
+  if(heiComponent == "total score" | heiComponent == "fatty acids"){
+    scoringData <- scoringData %>%
+      dplyr::mutate(TOT_TFACIDS = (DR1_MONOPOLY + DR2_MONOPOLY) / (DR1TSFAT + DR2TSFAT)) %>%
+      dplyr::select(-c(DR1_TFACIDS, DR2_TFACIDS))
+  }
+
   if(method == "simple"){
 
     # simple scoring, total score
@@ -152,7 +158,6 @@ score <- function(method, years, component, demo = NULL, sex = c("Female", "Male
       for(variables in names(variableList_heiComponents)[-c(1)]){
 
         scoringVariable<- unlist(variableList_heiComponents[variables])
-
         variableSimpleScores <- simpleScore(scoringData, scoringVariable, age[1])
 
         finalSimpleScores <- finalSimpleScores %>%
@@ -165,7 +170,8 @@ score <- function(method, years, component, demo = NULL, sex = c("Female", "Male
 
       finalSimpleScores <- finalSimpleScores %>%
         dplyr::mutate(score = rowSums(.[setdiff(names(.),c("SEQN", "WTDR2D", "SEX", "AGE", "RACE_ETH", "FAMINC"))])) %>%
-        dplyr::mutate(dplyr::across(c(SEX, AGE, RACE_ETH, FAMINC), as.factor))
+        dplyr::mutate(dplyr::across(c(SEX, AGE, RACE_ETH, FAMINC), as.factor)) %>%
+        tidyr::drop_na(score)
       colnames(finalSimpleScores)[-c(1:6, 20)] <- unname(unlist(variableList_heiComponents))[-c(1)]
       return(finalSimpleScores)
 
@@ -177,7 +183,8 @@ score <- function(method, years, component, demo = NULL, sex = c("Female", "Male
 
       finalSimpleScores <- simpleScore(finalScoringData, scoringVariable, age[1]) %>%
         dplyr::select(SEQN, WTDR2D, SEX, AGE, RACE_ETH, FAMINC, score) %>%
-        dplyr::mutate(dplyr::across(c(SEX, AGE, RACE_ETH, FAMINC), as.factor))
+        dplyr::mutate(dplyr::across(c(SEX, AGE, RACE_ETH, FAMINC), as.factor)) %>%
+        tidyr::drop_na(score)
       return(finalSimpleScores)
     }
 
@@ -210,7 +217,8 @@ score <- function(method, years, component, demo = NULL, sex = c("Female", "Male
         colnames(scoresTable)[length(colnames(scoresTable))] <- paste("score", variables, sep = "_")
       }
       scoresTable <- scoresTable %>%
-        dplyr::mutate(score = rowSums(dplyr::across(dplyr::where(is.numeric))))
+        dplyr::mutate(score = rowSums(dplyr::across(dplyr::where(is.numeric)))) %>%
+        tidyr::drop_na(score)
 
       # set order of ageBracket variable
       if(demographicGroup == "ageBracket"){
@@ -242,7 +250,8 @@ score <- function(method, years, component, demo = NULL, sex = c("Female", "Male
 
     demoVar <- colnames(finalScoringData)[length(colnames(finalScoringData))]
     demoVar <- rlang::sym(demoVar)
-    scoresTable <- scoringFunction(finalScoringData, scoringVariable, demoVar, age[1])
+    scoresTable <- scoringFunction(finalScoringData, scoringVariable, demoVar, age[1]) %>%
+      tidyr::drop_na(score)
 
     # set order of ageBracket variable
     if(demographicGroup == "ageBracket"){
