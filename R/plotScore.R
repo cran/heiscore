@@ -179,14 +179,14 @@ plotScore <- function(graph = NULL, method, years, component, demo = NULL, sex =
       ggplot2::ylab("Proportion") +
       ggplot2::xlab(stringr::str_to_title(heiComponent)) +
       ggplot2::theme_classic() +
-      ggplot2::theme(axis.text=ggplot2::element_text(color="black", size=11),
-                     axis.title = ggplot2::element_text(face="bold", size=15)) +
-      ggplot2::xlim(0, axisMax) +
-      if(heiComponent != "total score"){
-        ggplot2::ggtitle(paste0("Weighted Histogram of ", stringr::str_to_title(heiComponent), " Scores"))
-      } else{
-        ggplot2::ggtitle(paste0("Weighted Histogram of Total Scores"))
-      }
+      ggplot2::theme(axis.text=ggplot2::element_text(color="black", size=11)) +
+                     #axis.title = ggplot2::element_text(face="bold", size=15)) +
+      ggplot2::xlim(0, axisMax) #+
+      # if(heiComponent != "total score"){
+      #   ggplot2::ggtitle(paste0("Weighted Histogram of ", stringr::str_to_title(heiComponent), " Scores"))
+      # } else{
+      #   ggplot2::ggtitle(paste0("Weighted Histogram of Total Scores"))
+      # }
     return(result_plot)
 
   } # end plotting simple Score
@@ -210,21 +210,21 @@ plotScore <- function(graph = NULL, method, years, component, demo = NULL, sex =
     if(graph == "bar"){
       demoVar <- rlang::sym(colnames(score_output)[1])
       score <- rlang::sym("score")
-
       result_plot <- ggplot2::ggplot(score_output) +
         ggplot2::geom_bar(ggplot2::aes(x=!!demoVar, y=!!score, fill = !!demoVar), stat="identity") +
-        ggplot2::labs(title = paste(stringr::str_to_title(scoringMethod), "Scores by", stringr::str_to_title(demographicGroup)), x = stringr::str_to_title(demographicGroup), y = "Score") +
+        #ggplot2::labs(title = paste(stringr::str_to_title(scoringMethod), "Scores by", stringr::str_to_title(demographicGroup))) +
+        ggplot2::labs(x = stringr::str_to_title(demographicGroup), y = "Score") +
         ggplot2::theme_classic() +
         ggplot2::scale_fill_manual(values=radarColors) +
         ggplot2::ylim(0, axisMax)  +
         ggplot2::guides(fill=ggplot2::guide_legend(title=stringr::str_to_title(demographicGroup))) +
-        if(demographicGroup == "Family Income"){
+        if(demographicGroup == "income"){
           ggplot2::theme(axis.text=ggplot2::element_text(color="black", size=11),
-                         axis.title = ggplot2::element_text(face="bold", size=15),
+                         #axis.title = ggplot2::element_text(face="bold", size=15),
                          axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust=1))
         } else{
-          ggplot2::theme(axis.text=ggplot2::element_text(color="black", size=11),
-                         axis.title = ggplot2::element_text(face="bold", size=15))
+          ggplot2::theme(axis.text=ggplot2::element_text(color="black", size=11))
+                         #axis.title = ggplot2::element_text(face="bold", size=15))
         }
       return(result_plot)
 
